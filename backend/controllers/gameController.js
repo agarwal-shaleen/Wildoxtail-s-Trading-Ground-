@@ -1,8 +1,8 @@
 const { games } = require("../data/gameData");
 const { v4: uuid } = require("uuid");
 
-const ROUND_DURATION_SEC = 5;
-const INTERMISSION_SEC = 1;
+const ROUND_DURATION_SEC = 90;
+const INTERMISSION_SEC = 10;
 const MAX_POSITION = 2; 
 
 // --- HELPER: BROADCAST ---
