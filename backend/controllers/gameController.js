@@ -106,8 +106,8 @@ function placeOrder(req, res) {
         const maker = game.players.find(p => p.id === match.playerId);
         const execPrice = match.price;
 
-        updatePlayerLots(player, side, execPrice);
-        updatePlayerLots(maker, isBuy ? 'sell' : 'buy', execPrice);
+        updatePlayerLots(player, side, execPrice, game);
+        updatePlayerLots(maker, isBuy ? 'sell' : 'buy', execPrice, game);
 
         oppBook.splice(matchIdx, 1);
         game.gameState.marketPrice = execPrice;
@@ -130,7 +130,7 @@ function placeOrder(req, res) {
     res.json({ success: true });
 }
 
-function updatePlayerLots(p, side, price) {
+function updatePlayerLots(p, side, price, game) {
     if (side === 'buy') {
         if (p.openPosition < 0) {
             const lotIdx = p.lots.findIndex(l => l.side === 'short');
@@ -142,6 +142,10 @@ function updatePlayerLots(p, side, price) {
             p.lots.push({ side: 'long', price });
         }
         p.openPosition++;
+        if(p.openPosition === 2){
+            game.gameState.buyOrders = game.gameState.buyOrders.filter(o => o.id !== p);
+        }
+
     } else {
         if (p.openPosition > 0) {
             const lotIdx = p.lots.findIndex(l => l.side === 'long');
@@ -153,6 +157,9 @@ function updatePlayerLots(p, side, price) {
             p.lots.push({ side: 'short', price });
         }
         p.openPosition--;
+        if(p.openPosition === -2){
+            game.gameState.sellOrders = game.gameState.sellOrders.filter(o => o.id !== p);
+        }
     }
     p.pnl = p.realizedPnl; 
 }
