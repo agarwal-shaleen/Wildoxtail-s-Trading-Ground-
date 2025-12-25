@@ -503,11 +503,11 @@ body { margin: 0; font-family: 'Inter', sans-serif; background-color: var(--bg-d
 
 const API_BASE = window.location.hostname === "localhost" 
   ? "http://localhost:4000/api/game" 
-  : "https://your-backend-name.onrender.com/api/game";
+  : "https://wildoxtails-trading-ground-backend.onrender.com/api/game";
 
 const socket = io(window.location.hostname === "localhost" 
   ? "http://localhost:4000" 
-  : "https://your-backend-name.onrender.com");
+  : "https://wildoxtails-trading-ground-backend.onrender.com");
 
 // --- MAIN APP ---
 export default function App() {
