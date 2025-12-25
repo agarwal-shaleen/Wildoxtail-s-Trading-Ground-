@@ -87,6 +87,10 @@ function placeOrder(req, res) {
     const game = games[roomCode];
     if (!game || game.gameState.status !== "active") return res.status(400).json({ error: "Market Closed" });
 
+    if (!price || price <= 0) {
+        return res.status(400).json({ error: "Price must be a positive number" });
+    }
+
     const player = game.players.find(p => p.id === playerId);
     if (!player) return res.status(400).json({ error: "Player not found" });
 
@@ -112,7 +116,7 @@ function placeOrder(req, res) {
         oppBook.splice(matchIdx, 1);
         game.gameState.marketPrice = execPrice;
 
-        if(player !== maker){
+        if(match.playerId !== playerId){
             game.gameState.trades.unshift({ 
                 id: uuid(), 
                 price: execPrice, 
@@ -142,8 +146,8 @@ function updatePlayerLots(p, side, price, game) {
             p.lots.push({ side: 'long', price });
         }
         p.openPosition++;
-        if(p.openPosition === 2){
-            game.gameState.buyOrders = game.gameState.buyOrders.filter(o => o.id !== p);
+        if(p.openPosition >= 2){
+            game.gameState.buyOrders = game.gameState.buyOrders.filter(o => o.playerId !== p.id);
         }
 
     } else {
@@ -157,8 +161,8 @@ function updatePlayerLots(p, side, price, game) {
             p.lots.push({ side: 'short', price });
         }
         p.openPosition--;
-        if(p.openPosition === -2){
-            game.gameState.sellOrders = game.gameState.sellOrders.filter(o => o.id !== p);
+        if(p.openPosition <= -2){
+            game.gameState.sellOrders = game.gameState.sellOrders.filter(o => o.playerId !== p.id);
         }
     }
     p.pnl = p.realizedPnl; 

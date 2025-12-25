@@ -586,6 +586,11 @@ export default function App() {
 
   const placeOrder = async (side) => {
     const price = Number(priceRef.current.value);
+    if (!price || price <= 0) {
+      setTradeError("Please enter a positive price");
+      setTimeout(() => setTradeError(""), 3000);
+      return;
+    }
     if (!price || !player || !roomCode) return;
     playSound(440);
     try {
@@ -697,7 +702,7 @@ export default function App() {
             <div className="right-panel">
               <div>
                 <div className="panel-header">Place Order</div>
-                <input type="number" className="price-input" ref={priceRef} placeholder="00" autoFocus />
+                <input type="number" className="price-input" ref={priceRef} placeholder="00" min="1" autoFocus />
                 <div className="trade-error">{tradeError}</div>
                 <div className="btn-row">
                   <button className="btn-trade btn-buy" onClick={() => placeOrder('buy')}>BUY</button>
